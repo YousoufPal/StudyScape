@@ -1,91 +1,50 @@
-# StudyScape
+# Welcome to your Expo app 👋
 
-StudyScape is a cross-platform mobile application designed to help students discover and rate study spots in Melbourne using a map interface. This project is built with React Native and utilizes Firebase for backend services.
+This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
 
-## Features
+## Get started
 
-- Discover study spots on a map centered around Melbourne.
-- Rate and review study spots.
-- User authentication with Firebase.
-- Filter study spots based on various criteria.
+1. Install dependencies
 
-## Project Structure
-
-```
-studyscape
-├── src
-│   ├── assets
-│   │   ├── fonts
-│   │   └── icons
-│   ├── components
-│   │   └── index.ts
-│   ├── navigation
-│   │   └── AppNavigator.tsx
-│   ├── screens
-│   │   ├── AuthScreen.tsx
-│   │   ├── MapScreen.tsx
-│   │   └── SpotDetailScreen.tsx
-│   ├── services
-│   │   ├── firebase.ts
-│   │   ├── geocodeService.ts
-│   │   └── spotService.ts
-│   └── types
-│       └── index.ts
-├── .env.example
-├── .eslintrc.js
-├── .prettierrc
-├── app.json
-├── babel.config.js
-├── package.json
-├── tsconfig.json
-├── README.md
-└── .github
-    └── workflows
-        └── ci.yml
-```
-
-## Getting Started
-
-### Prerequisites
-
-- Node.js (version 14 or higher)
-- Expo CLI (if using Expo)
-- Firebase account and project setup
-
-### Installation
-
-1. Clone the repository:
-   ```
-   git clone https://github.com/yourusername/studyscape.git
-   cd studyscape
-   ```
-
-2. Install dependencies:
-   ```
+   ```bash
    npm install
    ```
 
-3. Set up your Firebase configuration:
-   - Copy `.env.example` to `.env` and fill in your Firebase credentials.
+2. Start the app
 
-4. Run the application:
-   ```
-   npm start
+   ```bash
+   npx expo start
    ```
 
-### Folder Structure
+In the output, you'll find options to open the app in a
 
-- **src/assets**: Contains custom fonts and icons.
-- **src/components**: Reusable UI components.
-- **src/navigation**: Navigation setup for the app.
-- **src/screens**: Different screens of the application.
-- **src/services**: Services for Firebase and Geocoding API.
-- **src/types**: TypeScript types and interfaces.
+- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
+- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
+- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
+- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
 
-### Contributing
+You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
 
-Contributions are welcome! Please open an issue or submit a pull request for any improvements or features.
+## Get a fresh project
 
-### License
+When you're ready, run:
 
-This project is licensed under the MIT License. See the LICENSE file for details.
+```bash
+npm run reset-project
+```
+
+This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+
+## Learn more
+
+To learn more about developing your project with Expo, look at the following resources:
+
+- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
+- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+
+## Join the community
+
+Join our community of developers creating universal apps.
+
+- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
+- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
