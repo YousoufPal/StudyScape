@@ -1,5 +1,4 @@
 import { Ionicons } from '@expo/vector-icons';
-import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
 import { Modal, Pressable, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import MapView, { Marker } from 'react-native-maps';
@@ -34,11 +33,6 @@ const SAMPLE_SPOTS = [
 
 export default function MapScreen() {
   const [filterVisible, setFilterVisible] = useState(false);
-  const router = useRouter();
-
-  const handleMarkerPress = (spotId: string) => {
-    router.push({ pathname: '/SpotDetailScreen', params: { spotId } });
-  };
 
   return (
     <View style={styles.container}>
@@ -56,7 +50,6 @@ export default function MapScreen() {
             coordinate={spot.coords}
             title={spot.name}
             description={spot.category}
-            onPress={() => handleMarkerPress(spot.id)}
           />
         ))}
       </MapView>
