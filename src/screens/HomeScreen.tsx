@@ -12,7 +12,7 @@ import {
   Dimensions,
   Platform,
   Appearance,
-  TextInput, // Import TextInput
+  TextInput,
 } from 'react-native';
 import { useNavigation, NavigationProp } from '@react-navigation/native';
 import MapView, { Marker, Callout, PROVIDER_GOOGLE, Region } from 'react-native-maps';
@@ -20,7 +20,7 @@ import * as Location from 'expo-location';
 import { supabase } from '../lib/supabase';
 import { HomeStackParamList } from '../../App';
 
-// ... (StudySpotData interface, constants, etc. remain the same) ...
+// ... (StudySpotData interface, constants, debounce function remain the same) ...
 interface StudySpotData {
   id: string;
   name: string;
@@ -30,35 +30,29 @@ interface StudySpotData {
   longitude: number;
   photo_urls?: string[] | null;
   average_overall_rating?: number | null;
-  review_count?: number | null; // Ensure this is in your interface if selected
+  review_count?: number | null;
+  // Add amenity fields if you're going to display them directly or need them for filtering logic
+  amenity_wifi?: boolean | null;
+  amenity_power_outlets_available?: boolean | null;
 }
-
 type HomeScreenNavigationProp = NavigationProp<HomeStackParamList, 'HomeList'>;
-
 const { width, height } = Dimensions.get('window');
 const ASPECT_RATIO = width / height;
 const LATITUDE_DELTA = 0.0922;
 const LONGITUDE_DELTA = LATITUDE_DELTA * ASPECT_RATIO;
-const MELBOURNE_CBD_COORDS = { /* ... */ latitude: -37.8136, longitude: 144.9631, latitudeDelta: LATITUDE_DELTA, longitudeDelta: LONGITUDE_DELTA, };
-
-
-// Debounce function
-const debounce = <F extends (...args: any[]) => any>(func: F, waitFor: number) => {
+const MELBOURNE_CBD_COORDS = { latitude: -37.8136, longitude: 144.9631, latitudeDelta: LATITUDE_DELTA, longitudeDelta: LONGITUDE_DELTA };
+const debounce = <F extends (...args: any[]) => any>(func: F, waitFor: number) => { /* ... */ 
   let timeout: NodeJS.Timeout | null = null;
-
   const debounced = (...args: Parameters<F>) => {
-    if (timeout !== null) {
-      clearTimeout(timeout);
-      timeout = null;
-    }
+    if (timeout !== null) { clearTimeout(timeout); timeout = null; }
     timeout = setTimeout(() => func(...args), waitFor);
   };
-
   return debounced as (...args: Parameters<F>) => ReturnType<F>;
 };
 
 
 export default function HomeScreen() {
+  // ... (navigation, spots, loading, error, refreshing, viewMode, userLocation, initialRegion, mapRef, colorScheme states remain) ...
   const navigation = useNavigation<HomeScreenNavigationProp>();
   const [spots, setSpots] = useState<StudySpotData[]>([]);
   const [loading, setLoading] = useState(true);
@@ -70,12 +64,18 @@ export default function HomeScreen() {
   const mapRef = useRef<MapView>(null);
   const colorScheme = Appearance.getColorScheme();
 
-  const [searchText, setSearchText] = useState(''); // State for search text
 
-  const requestLocationPermissions = async () => { /* ... same as before ... */
+  const [searchText, setSearchText] = useState('');
+  
+  // --- Filter States ---
+  // Using 'all', 'yes', 'no' for more flexibility later, or just boolean
+  type FilterState = 'all' | 'yes'; // For MVP, 'yes' means true, 'all' means no filter for this amenity
+  const [wifiFilter, setWifiFilter] = useState<FilterState>('all');
+  const [powerFilter, setPowerFilter] = useState<FilterState>('all');
+
+  const requestLocationPermissions = async () => { /* ... same as before ... */ 
     let { status } = await Location.requestForegroundPermissionsAsync();
     if (status !== 'granted') {
-      // setError('Permission to access location was denied. Map will center on Melbourne CBD.');
       console.warn('Location permission denied. Centering map on Melbourne CBD.');
       setInitialRegion(MELBOURNE_CBD_COORDS); 
       return;
@@ -83,20 +83,20 @@ export default function HomeScreen() {
     try {
       let location = await Location.getCurrentPositionAsync({});
       setUserLocation(location);
-      setInitialRegion({
-        latitude: location.coords.latitude,
-        longitude: location.coords.longitude,
-        latitudeDelta: LATITUDE_DELTA,
-        longitudeDelta: LONGITUDE_DELTA,
-      });
+      setInitialRegion({ latitude: location.coords.latitude, longitude: location.coords.longitude, latitudeDelta: LATITUDE_DELTA, longitudeDelta: LONGITUDE_DELTA });
     } catch (e) {
-        console.warn("Could not get user location, defaulting to Melbourne CBD.", e);
-        setInitialRegion(MELBOURNE_CBD_COORDS);
+      console.warn("Could not get user location, defaulting to Melbourne CBD.", e);
+      setInitialRegion(MELBOURNE_CBD_COORDS);
     }
   };
 
-  const fetchSpots = async (isRefreshing = false, currentSearchText = searchText) => { // Added currentSearchText param
-    if (!isRefreshing && !loading) setLoading(true);
+  const fetchSpots = async (
+    isRefreshing = false,
+    currentSearchText = searchText,
+    currentWifiFilter = wifiFilter, // Pass current filter states
+    currentPowerFilter = powerFilter
+  ) => {
+    if (!isRefreshing && !loading) setLoading(true); // Show loading for new fetches/filters
     setError(null);
     try {
       let query = supabase
@@ -110,18 +110,29 @@ export default function HomeScreen() {
           longitude,
           photo_urls, 
           average_overall_rating,
-          review_count 
-        `)
+          review_count,
+          amenity_wifi, 
+          amenity_power_outlets_available 
+        `) // Ensure amenity columns are selected
         .order('name', { ascending: true });
 
+      // Apply Search Filter
       if (currentSearchText.trim() !== '') {
-        // Using 'ilike' for case-insensitive search on 'name' OR 'suburb'
-        // For more complex full-text search, Supabase offers .textSearch() with a tsvector column
         const searchTerm = `%${currentSearchText.trim()}%`;
         query = query.or(`name.ilike.${searchTerm},suburb.ilike.${searchTerm}`);
-        // If you want to search only name:
-        // query = query.ilike('name', `%${currentSearchText.trim()}%`);
       }
+
+      // Apply Amenity Filters
+      if (currentWifiFilter === 'yes') {
+        query = query.eq('amenity_wifi', true);
+      }
+      // If you wanted a 'no' option: else if (currentWifiFilter === 'no') { query = query.eq('amenity_wifi', false); }
+
+      if (currentPowerFilter === 'yes') {
+        query = query.eq('amenity_power_outlets_available', true);
+      }
+      // If you wanted a 'no' option: else if (currentPowerFilter === 'no') { query = query.eq('amenity_power_outlets_available', false); }
+
 
       const { data, error: fetchError } = await query;
 
@@ -145,49 +156,60 @@ export default function HomeScreen() {
     }
   };
 
-  // Debounced version of fetchSpots for search input
-  const debouncedFetchSpots = useCallback(debounce(fetchSpots, 500), []);
-
+  const debouncedFetchSpotsForSearch = useCallback(debounce((currentSearchText: string) => {
+    fetchSpots(false, currentSearchText, wifiFilter, powerFilter);
+  }, 500), [wifiFilter, powerFilter]); // Recreate debounce if filters change
 
   useEffect(() => {
     setLoading(true);
     requestLocationPermissions();
-    fetchSpots(false, ''); // Initial fetch without search text
+    fetchSpots(false, '', 'all', 'all'); // Initial fetch without search or filters
   }, []);
 
-  // Effect to re-fetch spots when searchText changes (debounced)
   useEffect(() => {
-    // Don't trigger initial fetch here again, already done in the first useEffect
-    // This effect is specifically for subsequent search text changes.
     if (!loading) { // Avoid fetching if initial load is still in progress
-      setLoading(true); // Show loading indicator while searching
-      debouncedFetchSpots(false, searchText);
+      setLoading(true);
+      debouncedFetchSpotsForSearch(searchText);
     }
-  }, [searchText, debouncedFetchSpots]); // Depend on searchText and the debounced function
+  }, [searchText, debouncedFetchSpotsForSearch]);
 
-  useEffect(() => { /* ... map animation effect, same as before ... */
+  // Effect to re-fetch when filters change (no debounce needed here as it's a direct tap)
+  useEffect(() => {
+      // Avoid re-fetching on initial mount if loading is true (handled by first useEffect)
+      if (!loading) {
+        setLoading(true);
+        fetchSpots(false, searchText, wifiFilter, powerFilter);
+      }
+  }, [wifiFilter, powerFilter]); // Re-fetch if wifiFilter or powerFilter changes, but not searchText here
+
+
+  useEffect(() => { /* ... map animation effect ... */ 
     if (userLocation && mapRef.current && viewMode === 'map') {
-        mapRef.current.animateToRegion({
-            latitude: userLocation.coords.latitude,
-            longitude: userLocation.coords.longitude,
-            latitudeDelta: LATITUDE_DELTA,
-            longitudeDelta: LONGITUDE_DELTA,
-        }, 1000);
+        mapRef.current.animateToRegion({ latitude: userLocation.coords.latitude, longitude: userLocation.coords.longitude, latitudeDelta: LATITUDE_DELTA, longitudeDelta: LONGITUDE_DELTA }, 1000);
     }
   }, [userLocation, viewMode]);
 
   const onRefresh = useCallback(() => {
     setRefreshing(true);
-    setSearchText(''); // Clear search on refresh
+    setSearchText('');
+    setWifiFilter('all'); // Reset filters on refresh
+    setPowerFilter('all');
     requestLocationPermissions();
-    fetchSpots(true, ''); // Pass true for refreshing and clear search text
+    fetchSpots(true, '', 'all', 'all');
   }, []);
 
-  const navigateToSpotDetail = (spot: StudySpotData) => { /* ... same as before ... */ 
-    navigation.navigate('SpotDetail', { spotId: spot.id, spotName: spot.name });
+  const navigateToSpotDetail = (spot: StudySpotData) => { /* ... same as before ... */ navigation.navigate('SpotDetail', { spotId: spot.id, spotName: spot.name });};
+
+  const toggleFilter = (filterType: 'wifi' | 'power') => {
+    if (filterType === 'wifi') {
+      setWifiFilter(prev => prev === 'yes' ? 'all' : 'yes');
+    } else if (filterType === 'power') {
+      setPowerFilter(prev => prev === 'yes' ? 'all' : 'yes');
+    }
+    // The useEffect for wifiFilter/powerFilter will trigger the fetch
   };
 
-  const renderListView = () => { /* ... same as before ... */ 
+  const renderListView = () => { /* ... same as before, but added ListEmptyComponent logic ... */ 
     return (
         <FlatList
         data={spots}
@@ -213,9 +235,9 @@ export default function HomeScreen() {
         )}
         keyExtractor={item => item.id.toString()}
         contentContainerStyle={styles.listContentContainer}
-        ListEmptyComponent={!loading && !error ? ( // Show only if not loading and no error
+        ListEmptyComponent={!loading && !error ? (
             <View style={styles.centered}>
-                <Text style={styles.noSpotsText}>No spots match your search.</Text>
+                <Text style={styles.noSpotsText}>No spots match your criteria.</Text>
             </View>
         ) : null}
         refreshControl={
@@ -224,7 +246,6 @@ export default function HomeScreen() {
         />
     );
   };
-
   const renderMapView = () => { /* ... same as before ... */ 
     return (
         <MapView
@@ -255,7 +276,8 @@ export default function HomeScreen() {
     );
   };
 
-  if (loading && !refreshing && spots.length === 0 && searchText === '') { // Show full screen loader only on initial load and no search
+  if (loading && !refreshing && spots.length === 0 && searchText === '' && wifiFilter === 'all' && powerFilter === 'all') {
+    // More specific condition for initial full screen loader
     return (
       <View style={styles.centered}>
         <ActivityIndicator size="large" color="#4A90E2" />
@@ -272,36 +294,40 @@ export default function HomeScreen() {
           placeholder="Search by name or suburb..."
           placeholderTextColor="#888"
           value={searchText}
-          onChangeText={setSearchText} // Directly update state, useEffect will trigger debounced fetch
-          clearButtonMode="while-editing" // iOS clear button
+          onChangeText={setSearchText}
+          clearButtonMode="while-editing"
         />
+        {/* --- Filter Buttons --- */}
+        <View style={styles.filterButtonsContainer}>
+          <TouchableOpacity
+            style={[styles.filterButton, wifiFilter === 'yes' && styles.filterButtonActive]}
+            onPress={() => toggleFilter('wifi')}>
+            <Text style={[styles.filterButtonText, wifiFilter === 'yes' && styles.filterButtonTextActive]}>Has Wi-Fi</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={[styles.filterButton, powerFilter === 'yes' && styles.filterButtonActive]}
+            onPress={() => toggleFilter('power')}>
+            <Text style={[styles.filterButtonText, powerFilter === 'yes' && styles.filterButtonTextActive]}>Has Power</Text>
+          </TouchableOpacity>
+        </View>
         <View style={styles.toggleContainer}>
-          <TouchableOpacity
-            style={[styles.toggleButton, viewMode === 'list' && styles.toggleButtonActive]}
-            onPress={() => setViewMode('list')}>
-            <Text style={[styles.toggleButtonText, viewMode === 'list' && styles.toggleButtonTextActive]}>List</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={[styles.toggleButton, viewMode === 'map' && styles.toggleButtonActive]}
-            onPress={() => setViewMode('map')}>
-            <Text style={[styles.toggleButtonText, viewMode === 'map' && styles.toggleButtonTextActive]}>Map</Text>
-          </TouchableOpacity>
+            {/* ... List/Map toggle ... */}
+            <TouchableOpacity style={[styles.toggleButton, viewMode === 'list' && styles.toggleButtonActive]} onPress={() => setViewMode('list')}><Text style={[styles.toggleButtonText, viewMode === 'list' && styles.toggleButtonTextActive]}>List</Text></TouchableOpacity><TouchableOpacity style={[styles.toggleButton, viewMode === 'map' && styles.toggleButtonActive]} onPress={() => setViewMode('map')}><Text style={[styles.toggleButtonText, viewMode === 'map' && styles.toggleButtonTextActive]}>Map</Text></TouchableOpacity>
         </View>
       </View>
       
-      {/* Display loading indicator during search/filter, but not full screen */}
-      {loading && (spots.length > 0 || searchText !== '') && (
+      {loading && (spots.length > 0 || searchText !== '' || wifiFilter !== 'all' || powerFilter !== 'all') && (
         <View style={styles.inlineLoadingContainer}>
             <ActivityIndicator size="small" color="#4A90E2" />
-            <Text style={styles.inlineLoadingText}>Searching...</Text>
+            <Text style={styles.inlineLoadingText}>Updating results...</Text>
         </View>
       )}
 
-
-      {error && (viewMode === 'list' || viewMode === 'map') && ( // Show error in both views
+      {/* ... Error and View Rendering Logic (mostly same, adjust ListEmptyComponent message) ... */}
+      {error && (viewMode === 'list' || viewMode === 'map') && (
         <View style={styles.centeredError}>
             <Text style={styles.errorText}>Error: {error}</Text>
-            <TouchableOpacity onPress={() => fetchSpots(false, searchText)} style={styles.retryButton}>
+            <TouchableOpacity onPress={() => fetchSpots(false, searchText, wifiFilter, powerFilter)} style={styles.retryButton}>
                 <Text style={styles.retryButtonText}>Try Again</Text>
             </TouchableOpacity>
         </View>
@@ -313,7 +339,7 @@ export default function HomeScreen() {
         <View style={styles.mapContainer}>
           {spots.length === 0 ? (
             <View style={styles.centeredMapMessage}>
-                <Text style={styles.noSpotsText}>No spots match your search.</Text>
+                <Text style={styles.noSpotsText}>No spots match your criteria.</Text>
             </View>
           ): null}
           {renderMapView()}
@@ -324,57 +350,69 @@ export default function HomeScreen() {
 }
 
 const styles = StyleSheet.create({
-  // ... (most styles from before)
+  // ... (all previous styles) ...
   headerContainer: {
-    backgroundColor: '#fff',
+    backgroundColor: '#ffffff', // White background for header
     paddingHorizontal: 15,
-    paddingTop: Platform.OS === 'android' ? 10 : 5, // Adjust for status bar
+    paddingTop: Platform.OS === 'android' ? 15 : 10,
     paddingBottom: 5,
     borderBottomWidth: 1,
     borderBottomColor: '#e0e0e0',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.05,
+    shadowRadius: 3,
+    elevation: 3,
   },
   searchInput: {
-    height: 45,
-    backgroundColor: '#f0f0f0',
-    borderRadius: 25,
-    paddingHorizontal: 20,
+    height: 48, // Slightly taller
+    backgroundColor: '#f0f3f5', // Lighter grey
+    borderRadius: 10, // Less rounded
+    paddingHorizontal: 18,
     fontSize: 16,
-    marginBottom: 10,
+    marginBottom: 12, // Space before filter buttons
     color: '#333',
+    borderWidth: 1,
+    borderColor: '#dde2e7'
   },
-  toggleContainer: {
+  filterButtonsContainer: {
     flexDirection: 'row',
-    justifyContent: 'center',
-    paddingBottom: 10, // Adjusted from paddingVertical
+    justifyContent: 'flex-start', // Or 'space-around'
+    marginBottom: 10,
+    gap: 10, // Spacing between filter buttons (if supported, or use margin)
   },
-  centeredMapMessage: { // For "No spots" message on map view
-    ...StyleSheet.absoluteFillObject,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'rgba(248, 249, 250, 0.8)', // Semi-transparent background
+  filterButton: {
+    paddingVertical: 8,
+    paddingHorizontal: 15,
+    borderRadius: 20,
+    borderWidth: 1,
+    borderColor: '#007AFF',
+    backgroundColor: '#fff', // Default unselected state
+    marginRight: 10, // For spacing if 'gap' isn't supported by RN version
   },
-  inlineLoadingContainer: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-    paddingVertical: 10,
-    backgroundColor: '#f8f9fa' // Match screen background
+  filterButtonActive: {
+    backgroundColor: '#007AFF',
+    borderColor: '#0056b3',
   },
-  inlineLoadingText: {
-    marginLeft: 8,
-    fontSize: 15,
-    color: '#555'
+  filterButtonText: {
+    color: '#007AFF',
+    fontSize: 14,
+    fontWeight: '500',
   },
-  // Keep other styles like:
-  // centered, centeredError, loadingText, container, listContentContainer, itemContainer, itemImage, 
-  // itemImagePlaceholder, itemImagePlaceholderText, itemTextContainer, itemName, itemAddress,
-  // itemRating, errorText, retryButton, retryButtonText, noSpotsText, mapContainer,
-  // calloutView, calloutTitle, calloutDescription, toggleButton, toggleButtonActive,
-  // toggleButtonText, toggleButtonTextActive
-  centered: { /* ... */ flex: 1, justifyContent: 'center', alignItems: 'center', padding: 20, backgroundColor: '#f8f9fa', },
+  filterButtonTextActive: {
+    color: '#fff',
+  },
+  // Updated Loading/Empty states for clarity
+  inlineLoadingContainer: { flexDirection: 'row', justifyContent: 'center', alignItems: 'center', paddingVertical: 15, backgroundColor: '#f8f9fa' },
+  inlineLoadingText: { marginLeft: 10, fontSize: 15, color: '#555' },
+  noSpotsText: { fontSize: 18, color: '#495057', textAlign: 'center', marginBottom: 8, },
+  // Make sure all previous styles from HomeScreen are still here and adjust as needed.
+  // (centered, centeredError, loadingText, container, listContentContainer, itemContainer, etc.)
+  centered: { flex: 1, justifyContent: 'center', alignItems: 'center', padding: 20, backgroundColor: '#f8f9fa', },
   centeredError: { flex: 1, justifyContent: 'center', alignItems: 'center', padding: 20, },
   loadingText: { marginTop: 10, fontSize: 16, color: '#555', },
   container: { flex: 1, backgroundColor: '#f8f9fa', },
+  toggleContainer: { flexDirection: 'row', justifyContent: 'center', paddingBottom: 10, },
   listContentContainer: { paddingVertical: 8, paddingHorizontal: 16, },
   itemContainer: { backgroundColor: '#fff', padding: 15, marginVertical: 8, borderRadius: 12, flexDirection: 'row', alignItems: 'center', shadowColor: '#000000', shadowOffset: { width: 0, height: 3 }, shadowOpacity: 0.1, shadowRadius: 6, elevation: 4, },
   itemImage: { width: width * 0.22, height: width * 0.22, borderRadius: 10, marginRight: 15, backgroundColor: '#e9ecef', },
@@ -387,8 +425,8 @@ const styles = StyleSheet.create({
   errorText: { color: '#dc3545', fontSize: 16, textAlign: 'center', marginBottom: 15, },
   retryButton: { backgroundColor: '#007AFF', paddingVertical: 12, paddingHorizontal: 25, borderRadius: 8, marginTop:10, },
   retryButtonText: { color: '#fff', fontSize: 16, fontWeight: '500', },
-  noSpotsText: { fontSize: 18, color: '#495057', textAlign: 'center', marginBottom: 8, },
   mapContainer: { flex: 1, },
+  centeredMapMessage: { ...StyleSheet.absoluteFillObject, justifyContent: 'center', alignItems: 'center', backgroundColor: 'rgba(248, 249, 250, 0.8)', },
   calloutView: { padding: 10, minWidth: 150, maxWidth: 250, },
   calloutTitle: { fontSize: 16, fontWeight: 'bold', marginBottom: 3, color: '#333', },
   calloutDescription: { fontSize: 13, color: '#555', },
