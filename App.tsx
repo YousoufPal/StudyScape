@@ -15,7 +15,7 @@ import SignUpScreen from './src/screens/SignUpScreen';
 import HomeScreen from './src/screens/HomeScreen'; // Placeholder
 import ProfileScreen from './src/screens/ProfileScreen'; // Placeholder
 import SpotDetailScreen from './src/screens/SpotDetailScreen';
-
+import AddReviewScreen from './src/screens/AddReviewScreen';
 
 // Define Param Lists for type safety (optional but good practice)
 export type AuthStackParamList = {
@@ -26,6 +26,7 @@ export type AuthStackParamList = {
 export type HomeStackParamList = {
   HomeList: undefined; // Changed from 'Home' to avoid conflict with Tab name
   SpotDetail: { spotId: string; spotName: string };
+  AddReview: { spotId: string; spotName: string };
 };
 
 export type MainAppTabParamList = {
@@ -47,27 +48,28 @@ function AuthScreens() {
   );
 }
 
-// This stack will handle navigation from HomeScreen to SpotDetailScreen
 function HomeStack() {
   return (
     <HomeStackNavigator.Navigator>
       <HomeStackNavigator.Screen
         name="HomeList"
-        component={HomeScreen} // Actual list screen
+        component={HomeScreen}
         options={{ title: 'Melbourne Study Spots' }}
       />
-      {/* SpotDetailScreen will be added here later */}
-      
       <HomeStackNavigator.Screen 
         name="SpotDetail" 
-        component={SpotDetailScreen} // To be created
-        options={({ route }) => ({ title: route.params?.spotName || 'Details' })} 
+        component={SpotDetailScreen} 
+        options={({ route }: any) => ({ title: route.params?.spotName || 'Details' })} 
       /> 
-     
+      <HomeStackNavigator.Screen // <-- ADD THIS SCREEN
+        name="AddReview"
+        component={AddReviewScreen}
+        // options can be dynamic too, or set in AddReviewScreen via navigation.setOptions
+        // options={({ route }: any) => ({ title: `Review: ${route.params?.spotName}` })} 
+      />
     </HomeStackNavigator.Navigator>
   );
 }
-
 
 function MainAppScreens() {
   return (
