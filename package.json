@@ -1,0 +1,44 @@
+{
+  "name": "studyscape",
+  "version": "1.0.0",
+  "main": "index.ts",
+  "scripts": {
+    "start": "expo start",
+    "android": "expo start --android",
+    "ios": "expo start --ios",
+    "web": "expo start --web"
+  },
+  "dependencies": {
+    "@react-navigation/bottom-tabs": "^7.3.13",
+    "@react-navigation/native": "^7.1.9",
+    "@react-navigation/stack": "^7.3.2",
+    "@supabase/supabase-js": "^2.49.4",
+    "assert": "^2.1.0",
+    "browserify-zlib": "^0.2.0",
+    "buffer": "^6.0.3",
+    "events": "^3.3.0",
+    "expo": "~53.0.9",
+    "expo-secure-store": "~14.2.3",
+    "expo-status-bar": "~2.2.3",
+    "https-browserify": "^1.0.0",
+    "react": "19.0.0",
+    "react-native": "0.79.2",
+    "react-native-dotenv": "^3.4.11",
+    "react-native-gesture-handler": "^2.25.0",
+    "react-native-get-random-values": "^1.11.0",
+    "react-native-safe-area-context": "^5.4.0",
+    "react-native-screens": "^4.10.0",
+    "react-native-url-polyfill": "^2.0.0",
+    "readable-stream": "^4.7.0",
+    "stream-http": "^3.2.0",
+    "url": "^0.11.4",
+    "react-native-maps": "1.20.1",
+    "expo-location": "~18.1.5"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.25.2",
+    "@types/react": "~19.0.10",
+    "typescript": "~5.8.3"
+  },
+  "private": true
+}
