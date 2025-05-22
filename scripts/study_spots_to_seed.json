@@ -1,0 +1,688 @@
+[
+  {
+    "name": "Krimper Cafe",
+    "address": "Gilford Lane, Melbourne CBD",
+    "suburb": "CBD",
+    "latitude": -37.814,
+    "longitude": 144.963,
+    "description": "Stylish converted warehouse cafe with a warm, welcoming vibe, popular among students. Features rustic exposed brick decor and unique furniture made from old lift doors.",
+    "hours": {
+      "monday": null, "tuesday": null, "wednesday": null, "thursday": null, "friday": null, "saturday": null, "sunday": null
+    },
+    "contact_info": { "phone": null, "email": null, "website": null },
+    "amenity_wifi": true,
+    "amenity_power_outlets_available": true,
+    "amenity_noise_level": "Moderate",
+    "amenity_food_available": true,
+    "other_amenities": {
+        "notes_wifi": "Available, inferred from laptop users being common",
+        "notes_power_outlets": "Available, inferred from laptop users"
+    },
+    "photo_urls": [],
+    "tags": [],
+    "average_overall_rating": 0,
+    "review_count": 0
+  },
+  {
+    "name": "Brick Lane",
+    "address": "33 Guildford Lane, Melbourne CBD",
+    "suburb": "CBD",
+    "latitude": -37.814,
+    "longitude": 144.963,
+    "description": "A beautiful old red-brick building, known as a go-to bakery-cafe combo destination in the CBD. Can be busy during brunch but suitable for studying in quieter afternoon hours.",
+    "hours": {
+      "monday": {"open": "07:30", "close": "15:00"},
+      "tuesday": {"open": "07:30", "close": "15:00"},
+      "wednesday": {"open": "07:30", "close": "15:00"},
+      "thursday": {"open": "07:30", "close": "15:00"},
+      "friday": {"open": "07:30", "close": "15:00"},
+      "saturday": {"open": "08:00", "close": "15:00"},
+      "sunday": {"open": "08:00", "close": "15:00"}
+    },
+    "contact_info": { "phone": null, "email": null, "website": "https://thebricklane.com.au/" },
+    "amenity_wifi": true,
+    "amenity_power_outlets_available": true,
+    "amenity_noise_level": "Moderate to Busy",
+    "amenity_food_available": true,
+    "other_amenities": {
+        "notes_wifi": "Available, inferred from study-friendly",
+        "notes_power_outlets": "Available",
+        "notes_noise_level": "Busy during brunch (10am-12pm), quieter in afternoon"
+    },
+    "photo_urls": [],
+    "tags": [],
+    "average_overall_rating": 0,
+    "review_count": 0
+  },
+  {
+    "name": "Guild Cafe",
+    "address": "State Library Victoria, 328 Swanston Street, Melbourne CBD",
+    "suburb": "CBD",
+    "latitude": -37.809811,
+    "longitude": 144.965195,
+    "description": "Located within the State Library Victoria, it's a classic spot for laptop users, offering a relaxing and peaceful atmosphere with a simple, classic menu. Ideal for focused work.",
+     "hours": {
+      "monday": {"open": "09:00", "close": "16:00"},
+      "tuesday": {"open": "09:00", "close": "16:00"},
+      "wednesday": {"open": "09:00", "close": "16:00"},
+      "thursday": {"open": "09:00", "close": "16:00"},
+      "friday": {"open": "09:00", "close": "16:00"},
+      "saturday": {"open": "10:00", "close": "15:30"},
+      "sunday": {"open": "10:00", "close": "15:30"}
+    },
+    "contact_info": { "phone": null, "email": null, "website": null, "instagram": "@guildcafe" },
+    "amenity_wifi": true,
+    "amenity_power_outlets_available": true,
+    "amenity_noise_level": "Quiet",
+    "amenity_food_available": true,
+    "other_amenities": {
+        "notes_wifi": "Good connection",
+        "notes_power_outlets": "Available, inferred from laptop-friendly and library setting",
+        "notes_noise_level": "Super quiet, relaxing atmosphere"
+    },
+    "photo_urls": [],
+    "tags": [],
+    "average_overall_rating": 0,
+    "review_count": 0
+  },
+  {
+    "name": "Hikari",
+    "address": "317 Swanston Street, Melbourne CBD 3000 VIC",
+    "suburb": "CBD",
+    "latitude": -37.814,
+    "longitude": 144.963,
+    "description": "Japanese-inspired cafe with spacious communal tables upstairs, perfect for laptop work. Minimalist interiors provide a calm refuge from city hustle. Downstairs is more grab-and-go.",
+    "hours": {
+      "monday": {"open": "08:00", "close": "17:00"},
+      "tuesday": {"open": "08:00", "close": "17:00"},
+      "wednesday": {"open": "08:00", "close": "17:00"},
+      "thursday": {"open": "08:00", "close": "17:00"},
+      "friday": {"open": "08:00", "close": "17:00"},
+      "saturday": {"open": "09:00", "close": "17:00"},
+      "sunday": {"open": "09:00", "close": "17:00"}
+    },
+    "contact_info": { "phone": "+61 3 9654 0383", "email": "nanae.hill@hikari.net.au", "website": "http://www.hikari.net.au/" },
+    "amenity_wifi": true,
+    "amenity_power_outlets_available": true,
+    "amenity_noise_level": "Calm",
+    "amenity_food_available": true,
+     "other_amenities": {
+        "notes_wifi": "Available, inferred from laptop work suitability",
+        "notes_power_outlets": "Available, inferred from laptop work suitability"
+    },
+    "photo_urls": [],
+    "tags": [],
+    "average_overall_rating": 0,
+    "review_count": 0
+  },
+  {
+    "name": "The Reading Room (VU Footscray Park)",
+    "address": "VU Footscray Park campus, Footscray",
+    "suburb": "Footscray",
+    "latitude": -37.80,
+    "longitude": 144.90,
+    "description": "Campus coffee stop that blends cafe and library culture. Allows users to exchange books. Ideal for studying with power points near every table.",
+    "hours": {
+      "monday": null, "tuesday": null, "wednesday": null, "thursday": null, "friday": null, "saturday": null, "sunday": null
+    },
+    "contact_info": { "phone": null, "email": null, "website": null },
+    "amenity_wifi": true,
+    "amenity_power_outlets_available": true,
+    "amenity_noise_level": "Moderate",
+    "amenity_food_available": true,
+    "other_amenities": {
+        "notes_wifi": "Available",
+        "notes_power_outlets": "Near every table"
+    },
+    "photo_urls": [],
+    "tags": [],
+    "average_overall_rating": 0,
+    "review_count": 0
+  },
+  {
+    "name": "Rudimentary",
+    "address": "16-20 Leeds St, Footscray, Melbourne, Victoria, 3011",
+    "suburb": "Footscray",
+    "latitude": -37.80,
+    "longitude": 144.90,
+    "description": "A nicely designed, laid-back space for study, housed in a portable building made from three shipping containers. Offers creative breakfast and good coffee, with outdoor seating among garden beds.",
+    "hours": {
+      "monday": {"open": "07:30", "close": "15:00"},
+      "tuesday": {"open": "07:30", "close": "15:00"},
+      "wednesday": {"open": "07:30", "close": "15:00"},
+      "thursday": {"open": "07:30", "close": "15:00"},
+      "friday": {"open": "07:30", "close": "15:00"},
+      "saturday": {"open": "08:00", "close": "15:00"},
+      "sunday": {"open": "08:00", "close": "15:00"}
+    },
+    "contact_info": { "phone": "03 8596 6909", "email": "info@rudimentary.com.au", "website": "http://www.rudimentary.com.au/" },
+    "amenity_wifi": true,
+    "amenity_power_outlets_available": true,
+    "amenity_noise_level": "Low to Moderate",
+    "amenity_food_available": true,
+    "other_amenities": {
+        "notes_wifi": "Available",
+        "notes_power_outlets": "Available, inferred from study-friendly"
+    },
+    "photo_urls": [],
+    "tags": [],
+    "average_overall_rating": 0,
+    "review_count": 0
+  },
+  {
+    "name": "Migrant Coffee",
+    "address": "3/576 Barkly St, West Footscray 3012",
+    "suburb": "West Footscray",
+    "latitude": -37.80,
+    "longitude": 144.90,
+    "description": "A cafe known for its delicious bagel specials and vibrant atmosphere, featuring a nice sunny courtyard and good tunes. The menu offers a twist of Filipino, Thai, and Island flavors in New York-style bagels.",
+    "hours": {
+      "monday": {"open": "07:00", "close": "14:00"},
+      "tuesday": {"open": "closed", "close": "closed"},
+      "wednesday": {"open": "closed", "close": "closed"},
+      "thursday": {"open": "07:00", "close": "14:00"},
+      "friday": {"open": "07:00", "close": "14:00"},
+      "saturday": {"open": "08:00", "close": "14:00"},
+      "sunday": {"open": "08:00", "close": "14:00"}
+    },
+    "contact_info": { "phone": null, "email": null, "website": "https://migrantcoffee.com/" },
+    "amenity_wifi": true,
+    "amenity_power_outlets_available": true,
+    "amenity_noise_level": "Moderate",
+    "amenity_food_available": true,
+    "other_amenities": {
+        "notes_wifi": "Available",
+        "notes_power_outlets": "Available"
+    },
+    "photo_urls": [],
+    "tags": [],
+    "average_overall_rating": 0,
+    "review_count": 0
+  },
+  {
+    "name": "Elephant Cafe",
+    "address": "Flemington",
+    "suburb": "Flemington",
+    "latitude": -37.79,
+    "longitude": 144.93,
+    "description": "A cafe in Flemington listed as a suitable spot to work from.",
+     "hours": {
+      "monday": null, "tuesday": null, "wednesday": null, "thursday": null, "friday": null, "saturday": null, "sunday": null
+    },
+    "contact_info": { "phone": null, "email": null, "website": null },
+    "amenity_wifi": true,
+    "amenity_power_outlets_available": true,
+    "amenity_noise_level": "Low to Moderate",
+    "amenity_food_available": true,
+    "other_amenities": {
+        "notes_wifi": "Free WiFi",
+        "notes_power_outlets": "Available"
+    },
+    "photo_urls": [],
+    "tags": ["Cafe", "Flemington", "FreeWifi", "WorkFriendly"],
+    "average_overall_rating": 0,
+    "review_count": 0
+  },
+  {
+    "name": "Second Home",
+    "address": "Eltham",
+    "suburb": "Eltham",
+    "latitude": -37.71,
+    "longitude": 145.14,
+    "description": "A work-friendly cafe in Melbourne’s leafy suburb of Eltham, housed in an iconic warehouse. Features a roaring open fire, providing a lovely environment for serious work.",
+    "hours": {
+      "monday": null, "tuesday": null, "wednesday": null, "thursday": null, "friday": null, "saturday": null, "sunday": null
+    },
+    "contact_info": { "phone": null, "email": null, "website": null },
+    "amenity_wifi": true,
+    "amenity_power_outlets_available": true,
+    "amenity_noise_level": "Low to Moderate",
+    "amenity_food_available": true,
+    "other_amenities": {
+        "notes_wifi": "Free WiFi",
+        "notes_power_outlets": "Available"
+    },
+    "photo_urls": [],
+    "tags": [],
+    "average_overall_rating": 0,
+    "review_count": 0
+  },
+  {
+    "name": "Café Gaia",
+    "address": "South Yarra",
+    "suburb": "South Yarra",
+    "latitude": -37.84,
+    "longitude": 144.99,
+    "description": "A cafe in South Yarra listed as a suitable spot to work from.",
+    "hours": {
+      "monday": null, "tuesday": null, "wednesday": null, "thursday": null, "friday": null, "saturday": null, "sunday": null
+    },
+    "contact_info": { "phone": null, "email": null, "website": null },
+    "amenity_wifi": true,
+    "amenity_power_outlets_available": true,
+    "amenity_noise_level": "Low to Moderate",
+    "amenity_food_available": true,
+    "other_amenities": {
+        "notes_wifi": "Free WiFi",
+        "notes_power_outlets": "Available"
+    },
+    "photo_urls": [],
+    "tags": [],
+    "average_overall_rating": 0,
+    "review_count": 0
+  },
+  {
+    "name": "Journal Café",
+    "address": "Ground floor of City Library, 253 Flinders Lane, Melbourne CBD",
+    "suburb": "CBD",
+    "latitude": -37.8170,
+    "longitude": 144.9652,
+    "description": "Nestled on the ground floor of inner Melbourne’s City Library, this cafe is suitably decked out for quiet conversations and extended work meetings, offering a coffee-infused atmosphere.",
+    "hours": {
+      "monday": null, "tuesday": null, "wednesday": null, "thursday": null, "friday": null, "saturday": null, "sunday": null
+    },
+    "contact_info": { "phone": null, "email": null, "website": "https://www.journalcafemelbourne.com/" },
+    "amenity_wifi": true,
+    "amenity_power_outlets_available": true,
+    "amenity_noise_level": "Quiet",
+    "amenity_food_available": true,
+    "other_amenities": {
+        "notes_wifi": "Free WiFi",
+        "notes_power_outlets": "Available"
+    },
+    "photo_urls": [],
+    "tags": [],
+    "average_overall_rating": 0,
+    "review_count": 0
+  },
+  {
+    "name": "Moat Café Wheeler Centre",
+    "address": "Downstairs near the State Library, Melbourne CBD",
+    "suburb": "CBD",
+    "latitude": -37.809811,
+    "longitude": 144.965195,
+    "description": "Offers a luxurious and peaceful vibe near the State Library, with thick red carpet designed to absorb noise. Ideal for focused work or consultations.",
+    "hours": {
+      "monday": null, "tuesday": null, "wednesday": null, "thursday": null, "friday": null, "saturday": null, "sunday": null
+    },
+    "contact_info": { "phone": null, "email": null, "website": "https://www.themoat.com.au/" },
+    "amenity_wifi": true,
+    "amenity_power_outlets_available": true,
+    "amenity_noise_level": "Quiet",
+    "amenity_food_available": true,
+    "other_amenities": {
+        "notes_wifi": "Rock-solid WiFi",
+        "notes_power_outlets": "Available"
+    },
+    "photo_urls": [],
+    "tags": [],
+    "average_overall_rating": 0,
+    "review_count": 0
+  },
+  {
+    "name": "A Minor Place",
+    "address": "Brunswick",
+    "suburb": "Brunswick",
+    "latitude": -37.77,
+    "longitude": 144.96,
+    "description": "A cafe in inner Melbourne's Brunswick, offering a subtle and timeless atmosphere with global dishes in a simple, wood-accented interior.",
+    "hours": {
+      "monday": null, "tuesday": null, "wednesday": null, "thursday": null, "friday": null, "saturday": null, "sunday": null
+    },
+    "contact_info": { "phone": null, "email": null, "website": "https://aminorplace.com.au/" },
+    "amenity_wifi": true,
+    "amenity_power_outlets_available": true,
+    "amenity_noise_level": "Low to Moderate",
+    "amenity_food_available": true,
+    "other_amenities": {
+        "notes_wifi": "Free WiFi",
+        "notes_power_outlets": "Available"
+    },
+    "photo_urls": [],
+    "tags": [],
+    "average_overall_rating": 0,
+    "review_count": 0
+  },
+  {
+    "name": "Fitrovia",
+    "address": "St Kilda",
+    "suburb": "St Kilda",
+    "latitude": -37.86,
+    "longitude": 144.98,
+    "description": "Set in a refurbished nurse boarding house in St Kilda, this cafe combines contemporary Australian cuisine with a buzzing atmosphere. Offers a peaceful environment with slatted wooden tables and plentiful foliage.",
+    "hours": {
+      "monday": {"open": "07:00", "close": null}, "tuesday": {"open": "07:00", "close": null}, "wednesday": {"open": "07:00", "close": null}, "thursday": {"open": "07:00", "close": null}, "friday": {"open": "07:00", "close": null}, "saturday": {"open": "08:00", "close": null}, "sunday": {"open": "08:00", "close": null}
+    },
+    "contact_info": { "phone": null, "email": null, "website": "https://fitzrovia.com.au/" },
+    "amenity_wifi": true,
+    "amenity_power_outlets_available": true,
+    "amenity_noise_level": "Moderate",
+    "amenity_food_available": true,
+     "other_amenities": {
+        "notes_wifi": "Free WiFi",
+        "notes_power_outlets": "Available",
+        "notes_hours": "Also open for dinner Wed-Sat"
+    },
+    "photo_urls": [],
+    "tags": [],
+    "average_overall_rating": 0,
+    "review_count": 0
+  },
+  {
+    "name": "Hobba",
+    "address": "428 Malvern Road, Prahran, VIC 3181",
+    "suburb": "Prahran",
+    "latitude": -37.84,
+    "longitude": 144.99,
+    "description": "A former tyre-factory transformed into a cafe with a rustic, relaxing feel, featuring aged wooden rafters and raw brick walls. Offers inside and outside seating, suitable for contemplation.",
+    "hours": {
+      "monday": {"open": "06:00", "close": "15:30"},
+      "tuesday": {"open": "06:00", "close": "15:30"},
+      "wednesday": {"open": "06:00", "close": "15:30"},
+      "thursday": {"open": "06:00", "close": "15:30"},
+      "friday": {"open": "06:00", "close": "15:30"},
+      "saturday": {"open": "06:30", "close": "16:00"},
+      "sunday": {"open": "06:30", "close": "16:00"}
+    },
+    "contact_info": { "phone": "03 9510 8336", "email": "info@hobba.com.au", "website": "https://www.hobba.com.au/" },
+    "amenity_wifi": true,
+    "amenity_power_outlets_available": true,
+    "amenity_noise_level": "Low to Moderate",
+    "amenity_food_available": true,
+    "other_amenities": {
+        "notes_wifi": "Available",
+        "notes_power_outlets": "Available"
+    },
+    "photo_urls": [],
+    "tags": [],
+    "average_overall_rating": 0,
+    "review_count": 0
+  },
+  {
+    "name": "Tick Tok Cafe",
+    "address": "Williamstown (next to Commonwealth Reserve)",
+    "suburb": "Williamstown",
+    "latitude": -37.86,
+    "longitude": 144.89,
+    "description": "A cafe in Williamstown offering hearty food and a distinct workday vibe, located conveniently next to Commonwealth Reserve.",
+    "hours": {
+      "monday": null, "tuesday": null, "wednesday": null, "thursday": null, "friday": null, "saturday": null, "sunday": null
+    },
+    "contact_info": { "phone": null, "email": null, "website": "https://www.instagram.com/ticktokcafe/" },
+    "amenity_wifi": true,
+    "amenity_power_outlets_available": true,
+    "amenity_noise_level": "Moderate",
+    "amenity_food_available": true,
+    "other_amenities": {
+        "notes_wifi": "Free WiFi",
+        "notes_power_outlets": "Available"
+    },
+    "photo_urls": [],
+    "tags": ["Cafe", "Williamstown", "FreeWifi", "WorkFriendly", "FoodAvailable"],
+    "average_overall_rating": 0,
+    "review_count": 0
+  },
+  {
+    "name": "Wolf and Hound",
+    "address": "60 Pin Oak Cres, Flemington",
+    "suburb": "Flemington",
+    "latitude": -37.79,
+    "longitude": 144.93,
+    "description": "A cozy cafe in Flemington offering specialty coffee and bites. Features a comfortable and calm atmosphere, making it ideal for study, and is dog-friendly with water bowls and hitching posts.",
+    "hours": {
+      "monday": null, "tuesday": null, "wednesday": null, "thursday": null, "friday": null, "saturday": null, "sunday": null
+    },
+    "contact_info": { "phone": null, "email": null, "website": "https://www.instagram.com/wolfandhoundcafe/" },
+    "amenity_wifi": true,
+    "amenity_power_outlets_available": true,
+    "amenity_noise_level": "Low to Moderate",
+    "amenity_food_available": true,
+    "other_amenities": {
+        "notes_wifi": "Free WiFi",
+        "notes_power_outlets": "Available"
+    },
+    "photo_urls": [],
+    "tags": [],
+    "average_overall_rating": 0,
+    "review_count": 0
+  },
+  {
+    "name": "Seven Seeds",
+    "address": "114 Berkeley Street, Carlton, VIC, 3053",
+    "suburb": "Carlton",
+    "latitude": -37.805462,
+    "longitude": 144.971222,
+    "description": "A study-focused spot located near the University of Melbourne, known for its exceptional coffee, delicious pastries, and spacious layout. Offers breakfast favorites with a twist and Australian classics.",
+    "hours": {
+      "monday": {"open": "07:00", "close": "17:00"},
+      "tuesday": {"open": "07:00", "close": "17:00"},
+      "wednesday": {"open": "07:00", "close": "17:00"},
+      "thursday": {"open": "07:00", "close": "17:00"},
+      "friday": {"open": "07:00", "close": "17:00"},
+      "saturday": {"open": "08:00", "close": "17:00"},
+      "sunday": {"open": "08:00", "close": "17:00"}
+    },
+    "contact_info": { "phone": null, "email": null, "website": "https://sevenseeds.com.au/" },
+    "amenity_wifi": true,
+    "amenity_power_outlets_available": true,
+    "amenity_noise_level": "Moderate",
+    "amenity_food_available": true,
+    "other_amenities": {
+        "notes_wifi": "Strong WiFi",
+        "notes_power_outlets": "Plenty",
+        "notes_noise_level": "roasting process can be noisy, but academic-friendly atmosphere",
+        "notes_hours": "Kitchen closes 4:00 PM"
+    },
+    "photo_urls": [],
+    "tags": [],
+    "average_overall_rating": 0,
+    "review_count": 0
+  },
+  {
+    "name": "Ampersand",
+    "address": "Thornbury",
+    "suburb": "Thornbury",
+    "latitude": -37.75,
+    "longitude": 145.00,
+    "description": "A coffee bean supplier with a work-friendly environment in Thornbury. Features a long wooden seat, abundant natural light, and a brick-paved courtyard with a large communal table. Offers a hearty yet imaginative menu.",
+    "hours": {
+      "monday": null, "tuesday": null, "wednesday": null, "thursday": null, "friday": null, "saturday": null, "sunday": null
+    },
+    "contact_info": { "phone": null, "email": null, "website": "https://www.instagram.com/ampersandthornbury/" },
+    "amenity_wifi": true,
+    "amenity_power_outlets_available": true,
+    "amenity_noise_level": "Moderate",
+    "amenity_food_available": true,
+    "other_amenities": {
+        "notes_wifi": "Free WiFi",
+        "notes_power_outlets": "Available"
+    },
+    "photo_urls": [],
+    "tags": [],
+    "average_overall_rating": 0,
+    "review_count": 0
+  },
+  {
+    "name": "St. Ali",
+    "address": "12-18 Yarra Pl, South Melbourne VIC 3205",
+    "suburb": "South Melbourne",
+    "latitude": -37.828,
+    "longitude": 144.957,
+    "description": "A trailblazer of Melbourne coffee, known for memorable brunches and in-house coffee roasting. Serves as an all-day meeting place with a vibrant atmosphere.",
+    "hours": {
+      "monday": {"open": "07:00", "close": "17:00"},
+      "tuesday": {"open": "07:00", "close": "17:00"},
+      "wednesday": {"open": "07:00", "close": "17:00"},
+      "thursday": {"open": "07:00", "close": "17:00"},
+      "friday": {"open": "07:00", "close": "17:00"},
+      "saturday": {"open": "07:00", "close": "17:00"},
+      "sunday": {"open": "07:00", "close": "17:00"}
+    },
+    "contact_info": { "phone": "03 9132 8966", "email": null, "website": "https://stali.com.au/" },
+    "amenity_wifi": true,
+    "amenity_power_outlets_available": true,
+    "amenity_noise_level": "Vibrant",
+    "amenity_food_available": true,
+    "other_amenities": {
+        "notes_wifi": "Available",
+        "notes_power_outlets": "Available",
+        "notes_hours": "Kitchen closes 3:00 PM weekdays, 4:00 PM weekends"
+    },
+    "photo_urls": [],
+    "tags": [],
+    "average_overall_rating": 0,
+    "review_count": 0
+  },
+  {
+    "name": "Industry Beans Fitzroy",
+    "address": "70-76 Westgarth Street, Fitzroy, VIC 3065",
+    "suburb": "Fitzroy",
+    "latitude": -37.7947645,
+    "longitude": 144.9780831,
+    "description": "A coffee roastery housed in an architecturally designed warehouse conversion, offering ideal working conditions for freelance workers. Features comfortable booths with power points and an extensive coffee menu.",
+    "hours": {
+      "monday": {"open": "07:00", "close": "15:30"},
+      "tuesday": {"open": "07:00", "close": "15:30"},
+      "wednesday": {"open": "07:00", "close": "15:30"},
+      "thursday": {"open": "07:00", "close": "15:30"},
+      "friday": {"open": "07:00", "close": "15:30"},
+      "saturday": {"open": "08:00", "close": "15:30"},
+      "sunday": {"open": "08:00", "close": "15:30"}
+    },
+    "contact_info": { "phone": "03 9417 1034", "email": "venues@industrybeans.com", "website": "http://industrybeans.com" },
+    "amenity_wifi": true,
+    "amenity_power_outlets_available": true,
+    "amenity_noise_level": "Moderate to Noisy",
+    "amenity_food_available": true,
+    "other_amenities": {
+        "notes_wifi": "Available",
+        "notes_power_outlets": "Powerpoints for chargers",
+        "notes_noise_level": "Can get noisy (background hum)"
+    },
+    "photo_urls": [],
+    "tags": [],
+    "average_overall_rating": 0,
+    "review_count": 0
+  },
+  {
+    "name": "Liminal",
+    "address": "161 Collins St, Melbourne 3000",
+    "suburb": "CBD",
+    "latitude": -37.8168,
+    "longitude": 144.9622,
+    "description": "An expansive CBD cafe designed specifically for workers, open only on weekdays. Offers communal tables, velvet booths, and plush armchairs, alongside serious coffee and an elaborate menu. Options to book tables or private boardrooms.",
+    "hours": {
+      "monday": {"open": "07:30", "close": "15:00"},
+      "tuesday": {"open": "07:30", "close": "15:00"},
+      "wednesday": {"open": "07:30", "close": "15:00"},
+      "thursday": {"open": "07:30", "close": "15:00"},
+      "friday": {"open": "07:30", "close": "15:00"},
+      "saturday": {"open": "closed", "close": "closed"},
+      "sunday": {"open": "closed", "close": "closed"}
+    },
+    "contact_info": { "phone": "03 9639 8264", "email": null, "website": "https://www.liminalmelbourne.com" },
+    "amenity_wifi": true,
+    "amenity_power_outlets_available": true,
+    "amenity_noise_level": "Moderate",
+    "amenity_food_available": true,
+    "other_amenities": {
+        "notes_wifi": "Available",
+        "notes_power_outlets": "Available",
+        "notes_hours": "Takeaway from 7:00 AM - 3:30 PM"
+    },
+    "photo_urls": [],
+    "tags": [],
+    "average_overall_rating": 0,
+    "review_count": 0
+  },
+  {
+    "name": "Barker's Foodstore and Eatery",
+    "address": "231-233 Park Street, South Melbourne VIC 3205",
+    "suburb": "South Melbourne",
+    "latitude": -37.828,
+    "longitude": 144.957,
+    "description": "A light-filled, modern cafe on South Melbourne’s Park Street, serving coffee and a small but well-thought-out menu. A quiet, comfortable, and inspiring spot for focused work, with plush booths, communal tables, or window seats. Features Barker's retail products in its menu.",
+    "hours": {
+      "monday": {"open": "closed", "close": "closed"},
+      "tuesday": {"open": "closed", "close": "closed"},
+      "wednesday": {"open": "07:00", "close": "15:00"},
+      "thursday": {"open": "07:00", "close": "15:00"},
+      "friday": {"open": "07:00", "close": "15:00"},
+      "saturday": {"open": "08:00", "close": "15:00"},
+      "sunday": {"open": "08:00", "close": "15:00"}
+    },
+    "contact_info": { "phone": "+61 410425629", "email": "onlineshop@barkers.com.au", "website": "https://www.barkers.com.au/melbourne-foodstore/" },
+    "amenity_wifi": true,
+    "amenity_power_outlets_available": true,
+    "amenity_noise_level": "Quiet",
+    "amenity_food_available": true,
+    "other_amenities": {
+        "notes_wifi": "Available",
+        "notes_power_outlets": "Available"
+    },
+    "photo_urls": [],
+    "tags": [],
+    "average_overall_rating": 0,
+    "review_count": 0
+  },
+{
+    "name": "Mr Tulk",
+    "address": "State Library of Victoria, 328 Swanston St, Melbourne VIC 3000",
+    "suburb": "CBD",
+    "latitude": -37.809811,
+    "longitude": 144.965195,
+    "description": "A charming spot conveniently located in the State Library of Victoria, popular for remote working. Features high ceilings and comfortable communal tables with lamps for easy reading.",
+    "hours": {
+      "monday": {"open": "07:00", "close": "17:00"},
+      "tuesday": {"open": "07:00", "close": "17:00"},
+      "wednesday": {"open": "07:00", "close": "17:00"},
+      "thursday": {"open": "07:00", "close": "17:00"},
+      "friday": {"open": "07:00", "close": "20:00"},
+      "saturday": {"open": "09:00", "close": "16:00"},
+      "sunday": {"open": "closed", "close": "closed"}
+    },
+    "contact_info": { "phone": "03 8660 5700", "email": "info@mrtulk.com.au", "website": "http://www.mrtulk.com.au" },
+    "amenity_wifi": true,
+    "amenity_power_outlets_available": false, 
+    "amenity_noise_level": "Moderate",
+    "amenity_food_available": true,
+    "other_amenities": {
+        "notes_wifi": "State Library of Victoria WiFi (captive portal, ports 80 and 8080 only)",
+        "notes_power_outlets": "Limited"
+    },
+    "photo_urls": [],
+    "tags": [],
+    "average_overall_rating": 0,
+    "review_count": 0
+  },
+  {
+    "name": "Allpress Melbourne Roastery",
+    "address": "80 Rupert St, Collingwood, Melbourne 3066",
+    "suburb": "Collingwood",
+    "latitude": -37.8070933,
+    "longitude": 144.9862198,
+    "description": "A calming inner-city retreat in a former abandoned warehouse, now a coffee roastery. Offers large tables, urban garden views, endless coffee supply, and a small, canteen-style menu. Ideal for focused work and a 'zen out' experience.",
+    "hours": {
+      "monday": {"open": "07:30", "close": "14:30"},
+      "tuesday": {"open": "07:30", "close": "14:30"},
+      "wednesday": {"open": "07:30", "close": "14:30"},
+      "thursday": {"open": "07:30", "close": "14:30"},
+      "friday": {"open": "07:30", "close": "14:30"},
+      "saturday": null, 
+      "sunday": null
+    },
+    "contact_info": { "phone": null, "email": null, "website": null }, 
+    "amenity_wifi": true,
+    "amenity_power_outlets_available": true,
+    "amenity_noise_level": "Quiet",
+    "amenity_food_available": true,
+    "other_amenities": {
+        "notes_wifi": "Available",
+        "notes_power_outlets": "Plenty (inferred from work-friendly)"
+    },
+    "photo_urls": [],
+    "tags": [],
+    "average_overall_rating": 0,
+    "review_count": 0
+  }
+]
