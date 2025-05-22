@@ -27,7 +27,7 @@ interface StudySpotData {
   suburb?: string | null;
   latitude: number;
   longitude: number;
-  photo_urls?: string[] | null;
+  photo_urls?: string[] | null; // Crucial for images
   average_overall_rating?: number | null;
   review_count?: number | null;
   amenity_wifi?: boolean | null;
@@ -40,7 +40,12 @@ const { width, height } = Dimensions.get('window');
 const ASPECT_RATIO = width / height;
 const LATITUDE_DELTA = 0.0922;
 const LONGITUDE_DELTA = LATITUDE_DELTA * ASPECT_RATIO;
-const MELBOURNE_CBD_COORDS = { latitude: -37.8136, longitude: 144.9631, latitudeDelta: LATITUDE_DELTA, longitudeDelta: LONGITUDE_DELTA };
+const MELBOURNE_CBD_COORDS: Region = { 
+  latitude: -37.8136, 
+  longitude: 144.9631, 
+  latitudeDelta: LATITUDE_DELTA, 
+  longitudeDelta: LONGITUDE_DELTA 
+};
 
 const debounce = <F extends (...args: any[]) => any>(func: F, waitFor: number) => {
   let timeout: NodeJS.Timeout | null = null;
@@ -56,7 +61,7 @@ type FilterState = 'all' | 'yes';
 export default function HomeScreen() {
   const navigation = useNavigation<HomeScreenNavigationProp>();
   const [spots, setSpots] = useState<StudySpotData[]>([]);
-  const [loading, setLoading] = useState(true); // True for initial load and subsequent filter/search fetches
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [refreshing, setRefreshing] = useState(false);
   const [viewMode, setViewMode] = useState<'list' | 'map'>('list');
@@ -69,17 +74,18 @@ export default function HomeScreen() {
   const [wifiFilter, setWifiFilter] = useState<FilterState>('all');
   const [powerFilter, setPowerFilter] = useState<FilterState>('all');
   const [openNowFilterActive, setOpenNowFilterActive] = useState<boolean>(false);
-  const [fetchedOpenSpotIds, setFetchedOpenSpotIds] = useState<string[] | null>(null); // Stores IDs if openNow is active
+  const [fetchedOpenSpotIds, setFetchedOpenSpotIds] = useState<string[] | null>(null);
   const [isLoadingOpenNowIds, setIsLoadingOpenNowIds] = useState<boolean>(false);
 
   const isInitialMount = useRef(true);
 
   const requestLocationPermissions = useCallback(async () => {
+    // ... (same as your last working full version)
     let { status } = await Location.requestForegroundPermissionsAsync();
     if (status !== 'granted') {
       console.warn('Location permission denied. Centering map on Melbourne CBD.');
       setInitialRegion(MELBOURNE_CBD_COORDS);
-      return;
+      return false;
     }
     try {
       let location = await Location.getCurrentPositionAsync({ accuracy: Location.Accuracy.Balanced });
@@ -94,71 +100,59 @@ export default function HomeScreen() {
       if (viewMode === 'map' && mapRef.current) {
         mapRef.current.animateToRegion(userRegion, 1000);
       }
+      return true;
     } catch (e) {
       console.warn("Could not get user location.", e);
       setInitialRegion(MELBOURNE_CBD_COORDS);
+      return false;
     }
-  }, [viewMode]); // Add viewMode dependency
+  }, [viewMode]);
 
+  // Main function to fetch spots based on all current filter states
   const fetchSpotsData = useCallback(async (isRefresh = false) => {
-    if (!isRefresh) setLoading(true);
-    else setRefreshing(true);
+    if (!isRefresh) setLoading(true); else setRefreshing(true);
     setError(null);
 
-    let idsFromOpenNowFilter: string[] | null = null;
+    let currentOpenIdsToFilterBy: string[] | null = null;
 
     if (openNowFilterActive) {
-      // If openNowFilter is active, we MUST have its results before proceeding.
-      // If fetchedOpenSpotIds is null, it means we need to fetch them.
       if (fetchedOpenSpotIds === null && !isLoadingOpenNowIds) {
         setIsLoadingOpenNowIds(true);
         try {
-          console.log("Invoking isOpenNowFilter Edge Function...");
           const { data: funcData, error: funcError } = await supabase.functions.invoke('isOpenNowFilter');
           setIsLoadingOpenNowIds(false);
-          if (funcError) {
-            console.error("isOpenNowFilter Edge Function error:", funcError);
-            throw new Error(`Open Now filter failed: ${funcError.message}`);
-          }
-          idsFromOpenNowFilter = funcData?.openSpotIds ?? [];
-          setFetchedOpenSpotIds(idsFromOpenNowFilter); // Store for subsequent non-OpenNow filter changes
-          console.log("Open Now IDs fetched:", idsFromOpenNowFilter);
+          if (funcError) throw new Error(`"Open Now" filter error: ${funcError.message}`);
+          currentOpenIdsToFilterBy = funcData?.openSpotIds ?? [];
+          setFetchedOpenSpotIds(currentOpenIdsToFilterBy);
         } catch (e: any) {
-          console.error("Catch block for isOpenNowFilter invocation:", e);
           setError(e.message);
-          idsFromOpenNowFilter = []; // On error, assume no spots are open to avoid showing all
+          currentOpenIdsToFilterBy = []; 
           setFetchedOpenSpotIds([]);
           setIsLoadingOpenNowIds(false);
-          setLoading(false);
-          setRefreshing(false);
-          return; // Stop further processing if the crucial Open Now filter fails
+          setLoading(false); setRefreshing(false); return;
         }
       } else {
-        // OpenNow filter is active, and we already have the IDs (or it's currently fetching)
-        idsFromOpenNowFilter = fetchedOpenSpotIds;
+        currentOpenIdsToFilterBy = fetchedOpenSpotIds;
       }
     } else {
-        // OpenNow filter is not active, ensure we clear any previously fetched IDs
-        if (fetchedOpenSpotIds !== null) {
-            setFetchedOpenSpotIds(null);
-        }
-    }
-
-    // Proceed to fetch spots only if we are not currently waiting for openNow IDs
-    // or if the openNowFilter is not active.
-    if (isLoadingOpenNowIds && openNowFilterActive) {
-        console.log("Waiting for Open Now IDs before fetching spots...");
-        // setLoading(false); // Or keep it true if you want a continuous loading state
-        // setRefreshing(false);
-        return; 
+      currentOpenIdsToFilterBy = null;
+      if (fetchedOpenSpotIds !== null) setFetchedOpenSpotIds(null);
     }
     
-    console.log("Proceeding to fetch spots with filters:", {searchText, wifiFilter, powerFilter, idsFromOpenNowFilter});
+    if (isLoadingOpenNowIds && openNowFilterActive) {
+      if (!isRefresh) setLoading(true); else setRefreshing(true); // Keep loading indicator
+      return; 
+    }
 
     try {
       let query = supabase
         .from('study_spots')
-        .select(`id, name, address, suburb, latitude, longitude, photo_urls, average_overall_rating, review_count, amenity_wifi, amenity_power_outlets_available`)
+        .select(`
+          id, name, address, suburb, latitude, longitude, 
+          photo_urls,
+          average_overall_rating, review_count, 
+          amenity_wifi, amenity_power_outlets_available
+        `) // ENSURE photo_urls IS ALWAYS SELECTED
         .order('name', { ascending: true });
 
       if (searchText.trim()) {
@@ -168,139 +162,155 @@ export default function HomeScreen() {
       if (wifiFilter === 'yes') query = query.eq('amenity_wifi', true);
       if (powerFilter === 'yes') query = query.eq('amenity_power_outlets_available', true);
       
-      if (idsFromOpenNowFilter !== null) { // This means openNowFilterActive was true
-        if (idsFromOpenNowFilter.length === 0) {
-          // If Open Now filter is active and returns no IDs, show no spots
-          console.log("Open Now filter active, no spots are open. Setting spots to empty.");
-          setSpots([]);
-          setLoading(false);
-          setRefreshing(false);
-          return;
+      if (currentOpenIdsToFilterBy !== null) {
+        if (currentOpenIdsToFilterBy.length === 0) {
+          setSpots([]); 
+          setLoading(false); setRefreshing(false); return;
         }
-        query = query.in('id', idsFromOpenNowFilter);
+        query = query.in('id', currentOpenIdsToFilterBy);
       }
 
       const { data, error: fetchError } = await query;
-      if (fetchError) {
-        console.error("Supabase fetchSpots query error:", fetchError);
-        throw fetchError;
+      if (fetchError) throw fetchError;
+      
+      const validSpots = (data || []).filter((s: any) => typeof s.latitude === 'number' && typeof s.longitude === 'number') as StudySpotData[];
+      
+      // Log the first spot if available to check photo_urls
+      if (validSpots.length > 0) {
+        console.log("First spot in full fetch:", JSON.stringify(validSpots[0], null, 2));
+      } else {
+        console.log("No spots returned from full fetch with current filters.");
       }
-      const valid = (data || []).filter((s: any) => typeof s.latitude === 'number' && typeof s.longitude === 'number') as StudySpotData[];
-      console.log("Fetched and validated spots:", valid.length);
-      setSpots(valid);
+      setSpots(validSpots);
+
     } catch (e: any) {
-      console.error("Catch block in fetchSpotsData after query attempt:", e);
       setError(e.message || 'Unknown error fetching spots.');
-      setSpots([]); // Clear spots on error
+      setSpots([]);
     } finally {
       setLoading(false);
       setRefreshing(false);
     }
-  }, [searchText, wifiFilter, powerFilter, openNowFilterActive, fetchedOpenSpotIds, isLoadingOpenNowIds]); // Dependencies for re-creating this callback
+  }, [searchText, wifiFilter, powerFilter, openNowFilterActive, fetchedOpenSpotIds, isLoadingOpenNowIds]);
 
-  const debouncedFetch = useCallback(debounce(fetchSpotsData, 500), [fetchSpotsData]);
+  const debouncedFetchSpots = useCallback(debounce(fetchSpotsData, 500), [fetchSpotsData]);
 
   useEffect(() => {
-    requestLocationPermissions();
-    fetchSpotsData(); // Initial fetch
-    isInitialMount.current = false;
+    isInitialMount.current = true;
+    setLoading(true);
+    requestLocationPermissions().finally(() => {
+        fetchSpotsData().finally(() => {
+            isInitialMount.current = false;
+        });
+    });
   }, []); // Runs once on mount
 
   useEffect(() => {
-    if (!isInitialMount.current) {
-      // For direct filter toggles (WiFi, Power, OpenNow)
-      fetchSpotsData();
-    }
-  }, [wifiFilter, powerFilter, openNowFilterActive]); // Trigger on these direct filter changes
+    if (isInitialMount.current) return;
+    fetchSpotsData(); 
+  }, [wifiFilter, powerFilter, openNowFilterActive, fetchSpotsData]); // fetchSpotsData added here for completeness if its identity changes
 
   useEffect(() => {
-    if (!isInitialMount.current) {
-      // For debounced search text changes
-      debouncedFetch();
-    }
-  }, [searchText, debouncedFetch]); // Trigger on searchText change
+    if (isInitialMount.current) return;
+    debouncedFetchSpots();
+  }, [searchText, debouncedFetchSpots]); // debouncedFetchSpots added here for completeness
 
   useEffect(() => {
-    if (userLocation && mapRef.current && viewMode === 'map' && initialRegion.latitude === userLocation.coords.latitude) {
-      // Animate only if initialRegion is already set to user's location
-      mapRef.current.animateToRegion(initialRegion, 1000);
+    if (userLocation && mapRef.current && viewMode === 'map') {
+      mapRef.current.animateToRegion({
+        latitude: userLocation.coords.latitude,
+        longitude: userLocation.coords.longitude,
+        latitudeDelta: LATITUDE_DELTA,
+        longitudeDelta: LONGITUDE_DELTA,
+      }, 1000);
     }
-  }, [userLocation, viewMode, initialRegion]);
+  }, [userLocation, viewMode]);
 
   const onRefresh = useCallback(() => {
     setSearchText(''); 
     setWifiFilter('all'); 
     setPowerFilter('all'); 
     setOpenNowFilterActive(false); 
-    setFetchedOpenSpotIds(null); // Crucial to reset this
-    // requestLocationPermissions(); // Location already requested on mount, or handled if permissions change
-    fetchSpotsData(true); // Pass true for isRefresh
-  }, [fetchSpotsData]); // fetchSpotsData is now stable due to its own useCallback
+    setFetchedOpenSpotIds(null);
+    fetchSpotsData(true);
+  }, [fetchSpotsData]);
 
   const toggleFilter = (filterType: 'wifi' | 'power' | 'openNow') => {
     if (filterType === 'wifi') setWifiFilter(prev => prev === 'yes' ? 'all' : 'yes');
     else if (filterType === 'power') setPowerFilter(prev => prev === 'yes' ? 'all' : 'yes');
     else if (filterType === 'openNow') {
       setOpenNowFilterActive(prev => {
-        const newActiveState = !prev;
-        if (!newActiveState) { // If turning OFF
-          setFetchedOpenSpotIds(null); // Clear IDs so next fetch doesn't use stale ones
-        } else {
-          setFetchedOpenSpotIds(null); // Clear old IDs to force re-fetch for "Open Now"
+        const newState = !prev;
+        if (!newState || newState) { // Always clear to force re-evaluation by Edge Function logic
+          setFetchedOpenSpotIds(null); 
         }
-        return newActiveState;
+        return newState;
       });
     }
   };
 
-  const navigateToSpotDetail = (spot: StudySpotData) => navigation.navigate('SpotDetail', { spotId: spot.id, spotName: spot.name });
+  const navigateToSpotDetail = (spot: StudySpotData) => {
+    navigation.navigate('SpotDetail', { spotId: spot.id, spotName: spot.name });
+  };
 
-  const renderListView = () => ( <FlatList /* ... same as before, ensure ListEmptyComponent has good message ... */ 
-    data={spots}
-    renderItem={({ item }) => (
-      <TouchableOpacity style={styles.itemContainer} onPress={() => navigateToSpotDetail(item)}>
-        {item.photo_urls?.[0]
-          ? <Image source={{ uri: item.photo_urls[0] }} style={styles.itemImage} />
-          : <View style={[styles.itemImage, styles.itemImagePlaceholder]}><Text style={styles.itemImagePlaceholderText}>No Image</Text></View>}
-        <View style={styles.itemTextContainer}>
-          <Text style={styles.itemName} numberOfLines={2} ellipsizeMode="tail">{item.name}</Text>
-          <Text style={styles.itemAddress} numberOfLines={2} ellipsizeMode="tail">{item.address}{item.suburb ? `, ${item.suburb}` : ''}</Text>
-          {item.average_overall_rating !== undefined && item.average_overall_rating !== null && item.average_overall_rating > 0 && 
-            <Text style={styles.itemRating}>★ {item.average_overall_rating.toFixed(1)}</Text>}
-        </View>
-      </TouchableOpacity>
-    )}
-    keyExtractor={item => item.id}
-    contentContainerStyle={styles.listContentContainer}
-    ListEmptyComponent={!loading && !isLoadingOpenNowIds && !error ? <View style={styles.centered}><Text style={styles.noSpotsText}>No spots match your criteria.</Text></View> : null}
-    refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} colors={["#4A90E2"]} tintColor="#4A90E2" />}
-  />);
+  const renderListView = () => (
+    <FlatList
+      data={spots}
+      renderItem={({ item }) => {
+        // Log for each item being rendered
+        // console.log(`Rendering List Item: ${item.name}, Photo URL 0: ${item.photo_urls?.[0]}`);
+        return (
+          <TouchableOpacity style={styles.itemContainer} onPress={() => navigateToSpotDetail(item)}>
+            {item.photo_urls?.[0]
+              ? <Image 
+                  source={{ uri: item.photo_urls[0] }} 
+                  style={styles.itemImage} // Reverted from itemImageWithBorder
+                  resizeMode="cover" 
+                  onError={(e) => console.warn(`Image load error (list): ${item.photo_urls?.[0]}`, e.nativeEvent.error)} 
+                />
+              : <View style={[styles.itemImage, styles.itemImagePlaceholder]}><Text style={styles.itemImagePlaceholderText}>No Image</Text></View>}
+            <View style={styles.itemTextContainer}>
+              <Text style={styles.itemName} numberOfLines={2} ellipsizeMode="tail">{item.name}</Text>
+              <Text style={styles.itemAddress} numberOfLines={2} ellipsizeMode="tail">{item.address}{item.suburb ? `, ${item.suburb}` : ''}</Text>
+              {item.average_overall_rating != null && item.average_overall_rating > 0 && 
+                <Text style={styles.itemRating}>★ {item.average_overall_rating.toFixed(1)}</Text>}
+            </View>
+          </TouchableOpacity>
+        );
+      }}
+      keyExtractor={item => item.id}
+      contentContainerStyle={styles.listContentContainer}
+      ListEmptyComponent={!loading && !isLoadingOpenNowIds && !error && !refreshing ? <View style={styles.centered}><Text style={styles.noSpotsText}>No spots match your criteria.</Text></View> : null}
+      refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} colors={["#4A90E2"]} tintColor="#4A90E2" />}
+    />
+  );
 
   const renderMapView = () => (
     <MapView
       ref={mapRef}
-      style={{ flex: 1 }} // Use flex: 1 to fill the container it's placed in
+      style={{ flex: 1 }}
       provider={PROVIDER_GOOGLE}
       initialRegion={initialRegion}
       showsUserLocation={true}
       showsMyLocationButton={true}
       userInterfaceStyle={colorScheme === 'dark' ? 'dark' : 'light'}
     >
-      {spots.map(spot => (
-        <Marker
-          key={spot.id}
-          coordinate={{ latitude: spot.latitude, longitude: spot.longitude }}
-          title={spot.name}
-          // description={spot.address} // Description can make callout too busy, optional
-        >
-          <Callout onPress={() => navigateToSpotDetail(spot)} tooltip={Platform.OS === 'ios'}>
-            <View style={styles.calloutView}>
-              <Text style={styles.calloutTitle} numberOfLines={1}>{spot.name}</Text>
-              <Text style={styles.calloutDescription} numberOfLines={1}>{spot.address}</Text>
-            </View>
-          </Callout>
-        </Marker>
-      ))}
+      {spots.map(spot => {
+        // console.log(`Rendering Map Marker: ${spot.name}, Lat: ${spot.latitude}, Lng: ${spot.longitude}`); // Log for map markers
+        return (
+          <Marker
+            key={spot.id}
+            coordinate={{ latitude: spot.latitude, longitude: spot.longitude }}
+            title={spot.name}
+          >
+            <Callout onPress={() => navigateToSpotDetail(spot)} tooltip={Platform.OS === 'ios'}>
+              <View style={styles.calloutView}>
+                <Text style={styles.calloutTitle} numberOfLines={1}>{spot.name}</Text>
+                <Text style={styles.calloutDescription} numberOfLines={1}>{spot.address}</Text>
+              </View>
+            </Callout>
+          </Marker>
+        );
+      })}
     </MapView>
   );
 
@@ -347,7 +357,7 @@ export default function HomeScreen() {
       {!isActuallyLoading && !error && viewMode==='map' && (
         <View style={styles.mapContainer}>
             {renderMapView()}
-            {spots.length === 0 && !isActuallyLoading && !error && ( // Show message if no spots after filtering
+            {spots.length === 0 && !isActuallyLoading && !error && (
                 <View style={styles.centeredMapMessage}>
                     <Text style={styles.noSpotsText}>No spots match your criteria.</Text>
                 </View>
@@ -359,11 +369,19 @@ export default function HomeScreen() {
 }
 
 const styles = StyleSheet.create({
-  // ... (Keep all your existing styles as they were, make sure they are complete)
+  // itemImageWithBorder is removed, use itemImage
+  itemImage: { 
+    width: width * 0.22, 
+    height: width * 0.22, 
+    borderRadius: 10, 
+    marginRight: 15, 
+    backgroundColor: '#e9ecef',
+  },
+  // ... (rest of your styles from the previous "full" version)
   filterButtonDisabled: { opacity: 0.6 },
   headerContainer: { backgroundColor:'#fff',paddingHorizontal:15,paddingTop:Platform.OS==='android'?15:10,paddingBottom:5,borderBottomWidth:1,borderBottomColor:'#e0e0e0',shadowColor:'#000',shadowOffset:{width:0,height:2},shadowOpacity:0.05,shadowRadius:3,elevation:3 },
   searchInput: { height:48,backgroundColor:'#f0f3f5',borderRadius:10,paddingHorizontal:18,fontSize:16,marginBottom:12,color:'#333',borderWidth:1,borderColor:'#dde2e7' },
-  filterButtonsContainer: { flexDirection:'row',justifyContent:'flex-start',marginBottom:10,gap:10,flexWrap:'wrap' }, // Added flexWrap
+  filterButtonsContainer: { flexDirection:'row',justifyContent:'flex-start',marginBottom:10,gap:10,flexWrap:'wrap' },
   filterButton: { paddingVertical:8,paddingHorizontal:15,borderRadius:20,borderWidth:1,borderColor:'#007AFF',backgroundColor:'#fff',marginRight:10,marginBottom:5 },
   filterButtonActive: { backgroundColor:'#007AFF',borderColor:'#0056b3' },
   filterButtonText: { color:'#007AFF',fontSize:14,fontWeight:'500' },
@@ -376,9 +394,8 @@ const styles = StyleSheet.create({
   loadingText: { marginTop:10,fontSize:16,color:'#555' },
   container: { flex:1,backgroundColor:'#f8f9fa' },
   toggleContainer: { flexDirection:'row',justifyContent:'center',paddingBottom:10 },
-  listContentContainer: { paddingBottom: 20 }, // Added paddingBottom
+  listContentContainer: { paddingBottom: 20 },
   itemContainer: { backgroundColor:'#fff',padding:15,marginVertical:8,borderRadius:12,flexDirection:'row',alignItems:'center',shadowColor:'#000',shadowOffset:{width:0,height:3},shadowOpacity:0.1,shadowRadius:6,elevation:4 },
-  itemImage: { width:width*0.22,height:width*0.22,borderRadius:10,marginRight:15,backgroundColor:'#e9ecef' },
   itemImagePlaceholder: { justifyContent:'center',alignItems:'center' },
   itemImagePlaceholderText: { fontSize:12,color:'#adb5bd' },
   itemTextContainer: { flex:1,justifyContent:'center' },
@@ -389,8 +406,8 @@ const styles = StyleSheet.create({
   retryButton: { backgroundColor:'#007AFF',paddingVertical:12,paddingHorizontal:25,borderRadius:8,marginTop:10 },
   retryButtonText: { color:'#fff',fontSize:16,fontWeight:'500' },
   mapContainer: { flex:1 },
-  centeredMapMessage: { ...StyleSheet.absoluteFillObject,justifyContent:'center',alignItems:'center',backgroundColor:'rgba(248,249,250,0.8)', padding: 20 }, // Added padding
-  calloutView: { paddingHorizontal: 10, paddingVertical: 8, minWidth: 150, maxWidth: 250, alignItems: 'center' }, // Centered callout content
+  centeredMapMessage: { ...StyleSheet.absoluteFillObject,justifyContent:'center',alignItems:'center',backgroundColor:'rgba(248,249,250,0.8)', padding: 20 },
+  calloutView: { paddingHorizontal: 10, paddingVertical: 8, minWidth: 150, maxWidth: 250, alignItems: 'center' },
   calloutTitle: { fontSize: 16, fontWeight: 'bold', marginBottom: 3, color: '#333', textAlign: 'center' },
   calloutDescription: { fontSize: 13, color: '#555', textAlign: 'center' },
   toggleButton: { paddingVertical:8,paddingHorizontal:25,borderRadius:20,marginHorizontal:5,borderWidth:1,borderColor:'#007AFF' },
